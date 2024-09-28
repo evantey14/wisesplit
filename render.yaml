@@ -7,6 +7,4 @@ services:
     envVars:
       - key: NODE_VERSION
         value: 20.15.1
-      - key: REACT_APP_API_URL
-        value: https://expense-tracker.onrender.com/api
     autoDeploy: true
