@@ -10,6 +10,7 @@ import { parseISO } from 'date-fns';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
 const API_KEY = process.env.REACT_APP_API_KEY;
+const IS_DEV = process.env.NODE_ENV === 'development';
 
 if (!API_KEY) {
   console.error('REACT_APP_API_KEY is not set in environment variables');
@@ -20,7 +21,7 @@ function App() {
   const [payments, setPayments] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(IS_DEV);
 
   useEffect(() => {
     if (isAuthenticated) {

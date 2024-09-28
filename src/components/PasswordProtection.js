@@ -1,8 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function PasswordProtection({ onCorrectPassword }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isDev, setIsDev] = useState(false);
+
+  useEffect(() => {
+    setIsDev(process.env.NODE_ENV === 'development');
+    if (process.env.NODE_ENV === 'development') {
+      onCorrectPassword();
+    }
+  }, [onCorrectPassword]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -18,6 +26,21 @@ function PasswordProtection({ onCorrectPassword }) {
       setError('Incorrect password');
     }
   };
+
+  if (isDev) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="max-w-md w-full space-y-8 p-10 bg-white rounded-xl shadow-md">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Development Mode
+          </h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Password protection is disabled in development mode.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
