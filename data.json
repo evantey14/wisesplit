@@ -1,0 +1,34 @@
+{
+  "expenses": [
+    {
+      "description": "tv",
+      "amount": 300,
+      "paidBy": "evan",
+      "paidFor": [
+        "evan",
+        "neil",
+        "sab"
+      ],
+      "date": "2024-09-28T00:00:00.000Z"
+    },
+    {
+      "description": "tv",
+      "amount": 300,
+      "paidBy": "evan",
+      "paidFor": [
+        "evan",
+        "neil",
+        "sab"
+      ],
+      "date": "2024-09-28"
+    }
+  ],
+  "payments": [
+    {
+      "from": "sab",
+      "to": "evan",
+      "amount": 200,
+      "date": "2024-09-28T00:00:00.000Z"
+    }
+  ]
+}

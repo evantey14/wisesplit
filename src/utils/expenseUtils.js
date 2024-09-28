@@ -1,23 +1,43 @@
-export function calculateBalances(expenses, payments) {
+export function calculateTotalExpenses(expenses) {
+  return expenses.reduce((total, expense) => total + parseFloat(expense.amount), 0);
+}
+
+export function calculateTotalPayments(payments) {
+  return payments.reduce((total, payment) => total + parseFloat(payment.amount), 0);
+}
+
+export function calculateBalances(expenses = [], payments = []) {
   const balances = {};
+
+  // Initialize balances for all people involved
+  const allPeople = new Set();
+  expenses.forEach(expense => {
+    allPeople.add(expense.paidBy);
+    expense.paidFor.forEach(person => allPeople.add(person));
+  });
+  payments.forEach(payment => {
+    allPeople.add(payment.from);
+    allPeople.add(payment.to);
+  });
+  allPeople.forEach(person => {
+    balances[person] = 0;
+  });
 
   // Calculate balances from expenses
   expenses.forEach(expense => {
-    const { amount, paidBy, participants } = expense;
-    const share = amount / participants.length;
-
-    participants.forEach(participant => {
-      balances[participant] = (balances[participant] || 0) - share;
+    const { paidBy, amount, paidFor } = expense;
+    const splitAmount = amount / paidFor.length;
+    balances[paidBy] += amount;
+    paidFor.forEach(person => {
+      balances[person] -= splitAmount;
     });
-
-    balances[paidBy] = (balances[paidBy] || 0) + amount;
   });
 
   // Adjust balances based on payments
   payments.forEach(payment => {
-    const { payer, recipient, amount } = payment;
-    balances[payer] = (balances[payer] || 0) - amount;
-    balances[recipient] = (balances[recipient] || 0) + amount;
+    const { from, to, amount } = payment;
+    balances[from] -= amount;
+    balances[to] += amount;
   });
 
   return balances;

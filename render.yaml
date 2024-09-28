@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: expense-tracker
+    env: node
+    buildCommand: npm ci && npm run build
+    startCommand: node server.js
+    envVars:
+      - key: NODE_VERSION
+        value: 20.15.1
+      - key: REACT_APP_API_URL
+        value: https://expense-tracker.onrender.com/api
+    autoDeploy: true

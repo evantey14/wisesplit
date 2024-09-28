@@ -6,7 +6,7 @@ function ExpenseForm({ onAddExpense }) {
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
   const [paidBy, setPaidBy] = useState('evan');
-  const [paidFor, setPaidFor] = useState([]);
+  const [paidFor, setPaidFor] = useState(people);
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
 
   const handleSubmit = (e) => {
@@ -17,12 +17,12 @@ function ExpenseForm({ onAddExpense }) {
         amount: parseFloat(amount),
         paidBy,
         paidFor,
-        date: new Date(date),
+        date: date, // Send the date string as is
       });
       setDescription('');
       setAmount('');
       setPaidBy('evan');
-      setPaidFor([]);
+      setPaidFor(people);
       setDate(new Date().toISOString().split('T')[0]);
     }
   };
@@ -85,7 +85,7 @@ function ExpenseForm({ onAddExpense }) {
         </label>
         <div className="flex flex-wrap gap-2">
           {people.map(person => (
-            <label key={person} className="inline-flex items-center">
+            <label key={person} className="inline-flex">
               <input
                 type="checkbox"
                 className="form-checkbox"
