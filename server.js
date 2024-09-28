@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://your-render-app-url.onrender.com']
+  origin: ['http://localhost:3000', 'https://wisesplit.onrender.com', 'https://wisesplit-1.onrender.com']
 }));
 
 const DATA_FILE = path.join(__dirname, 'data.json');
