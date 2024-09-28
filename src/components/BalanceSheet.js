@@ -1,22 +1,35 @@
 import React from 'react';
-import { calculateBalances } from '../utils/expenseUtils';
+import { calculateTotalExpenses, calculateBalances } from '../utils/expenseUtils';
 
 function BalanceSheet({ expenses, payments }) {
-  const balances = calculateBalances(expenses, payments);
+  // Check if expenses and payments are arrays and have length
+  const validExpenses = Array.isArray(expenses) && expenses.length > 0;
+  const validPayments = Array.isArray(payments) && payments.length > 0;
+
+  const totalExpenses = validExpenses ? calculateTotalExpenses(expenses) : 0;
+  const balances = (validExpenses || validPayments) ? calculateBalances(expenses || [], payments || []) : {};
 
   return (
-    <div>
-      <h3 className="text-xl font-semibold mb-2">Balances</h3>
+    <div className="balance-sheet">
+      <h2>Balance Sheet</h2>
+      <p>Total Expenses: ${totalExpenses.toFixed(2)}</p>
+      
+      <h3>Balances:</h3>
       {Object.keys(balances).length > 0 ? (
-        <ul>
-          {Object.entries(balances).map(([person, balance]) => (
-            <li key={person} className="mb-1">
-              {person}: ${balance.toFixed(2)}
-            </li>
-          ))}
-        </ul>
+        Object.entries(balances).map(([person, owes]) => (
+          <div key={person}>
+            <h4>{person}</h4>
+            {Object.entries(owes).map(([owedTo, amount]) => (
+              <p key={`${person}-${owedTo}`}>
+                {amount > 0
+                  ? `Owes ${owedTo}: $${amount.toFixed(2)}`
+                  : `Is owed by ${owedTo}: $${(-amount).toFixed(2)}`}
+              </p>
+            ))}
+          </div>
+        ))
       ) : (
-        <p>No balance information available.</p>
+        <p>No balances to display.</p>
       )}
     </div>
   );

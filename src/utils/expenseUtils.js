@@ -9,35 +9,47 @@ export function calculateTotalPayments(payments) {
 export function calculateBalances(expenses = [], payments = []) {
   const balances = {};
 
-  // Initialize balances for all people involved
-  const allPeople = new Set();
+  // Process expenses
   expenses.forEach(expense => {
-    allPeople.add(expense.paidBy);
-    expense.paidFor.forEach(person => allPeople.add(person));
-  });
-  payments.forEach(payment => {
-    allPeople.add(payment.from);
-    allPeople.add(payment.to);
-  });
-  allPeople.forEach(person => {
-    balances[person] = 0;
-  });
+    const { paidBy, amount, splitBetween } = expense;
+    if (!paidBy || !amount || !splitBetween || !Array.isArray(splitBetween)) return;
+    
+    const splitAmount = amount / splitBetween.length;
 
-  // Calculate balances from expenses
-  expenses.forEach(expense => {
-    const { paidBy, amount, paidFor } = expense;
-    const splitAmount = amount / paidFor.length;
-    balances[paidBy] += amount;
-    paidFor.forEach(person => {
-      balances[person] -= splitAmount;
+    splitBetween.forEach(person => {
+      if (person !== paidBy) {
+        balances[person] = balances[person] || {};
+        balances[person][paidBy] = (balances[person][paidBy] || 0) + splitAmount;
+        balances[paidBy] = balances[paidBy] || {};
+        balances[paidBy][person] = (balances[paidBy][person] || 0) - splitAmount;
+      }
     });
   });
 
-  // Adjust balances based on payments
+  // Process payments
   payments.forEach(payment => {
     const { from, to, amount } = payment;
-    balances[from] -= amount;
-    balances[to] += amount;
+    if (!from || !to || !amount) return;
+    
+    balances[from] = balances[from] || {};
+    balances[from][to] = (balances[from][to] || 0) - amount;
+    balances[to] = balances[to] || {};
+    balances[to][from] = (balances[to][from] || 0) + amount;
+  });
+
+  // Simplify balances
+  Object.keys(balances).forEach(person1 => {
+    Object.keys(balances[person1]).forEach(person2 => {
+      if (balances[person2] && balances[person2][person1]) {
+        if (balances[person1][person2] > balances[person2][person1]) {
+          balances[person1][person2] -= balances[person2][person1];
+          delete balances[person2][person1];
+        } else {
+          balances[person2][person1] -= balances[person1][person2];
+          delete balances[person1][person2];
+        }
+      }
+    });
   });
 
   return balances;
