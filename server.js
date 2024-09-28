@@ -2,14 +2,36 @@ const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
 const cors = require('cors');
+require('dotenv').config(); // Add this line to load environment variables
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+const API_KEY = process.env.API_KEY; // Read API_KEY from environment variable
+
+if (!API_KEY) {
+  console.error('API_KEY is not set in environment variables');
+  process.exit(1);
+}
+
 app.use(express.json());
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://wisesplit.onrender.com', 'https://wisesplit-1.onrender.com']
+  origin: ['http://localhost:3000', 'https://wisesplit.onrender.com', 'https://wisesplit-1.onrender.com'],
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
+// Middleware to check API key
+const checkApiKey = (req, res, next) => {
+  const apiKey = req.get('Authorization');
+  if (apiKey !== `Bearer ${API_KEY}`) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  next();
+};
+
+// Apply API key check to all routes
+app.use('/api', checkApiKey);
 
 const DATA_FILE = path.join(__dirname, 'data.json');
 

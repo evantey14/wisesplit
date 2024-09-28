@@ -7,4 +7,10 @@ services:
     envVars:
       - key: NODE_VERSION
         value: 20.15.1
+      - key: API_KEY
+        sync: false
+      - key: REACT_APP_API_KEY
+        sync: false
+      - key: REACT_APP_PASSWORD
+        sync: false
     autoDeploy: true

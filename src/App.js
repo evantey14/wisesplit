@@ -5,23 +5,34 @@ import ExpenseList from './components/ExpenseList';
 import PaymentForm from './components/PaymentForm';
 import PaymentList from './components/PaymentList';
 import BalanceSheet from './components/BalanceSheet';
+import PasswordProtection from './components/PasswordProtection';
 import { parseISO } from 'date-fns';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
+const API_KEY = process.env.REACT_APP_API_KEY;
+
+if (!API_KEY) {
+  console.error('REACT_APP_API_KEY is not set in environment variables');
+}
 
 function App() {
   const [expenses, setExpenses] = useState([]);
   const [payments, setPayments] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (isAuthenticated) {
+      fetchData();
+    }
+  }, [isAuthenticated]);
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(`${API_URL}/data`);
+      const response = await axios.get(`${API_URL}/data`, {
+        headers: { Authorization: `Bearer ${API_KEY}` }
+      });
       if (response.data && typeof response.data === 'object') {
         setExpenses(response.data.expenses.map(expense => ({
           ...expense,
@@ -43,7 +54,9 @@ function App() {
 
   const addExpense = async (expense) => {
     try {
-      const response = await axios.post(`${API_URL}/expenses`, expense);
+      const response = await axios.post(`${API_URL}/expenses`, expense, {
+        headers: { Authorization: `Bearer ${API_KEY}` }
+      });
       setExpenses(response.data.map(exp => ({
         ...exp,
         date: parseISO(exp.date) // Convert date string to Date object
@@ -55,12 +68,18 @@ function App() {
 
   const addPayment = async (payment) => {
     try {
-      const response = await axios.post(`${API_URL}/payments`, payment);
+      const response = await axios.post(`${API_URL}/payments`, payment, {
+        headers: { Authorization: `Bearer ${API_KEY}` }
+      });
       setPayments(response.data);
     } catch (error) {
       setError('Failed to add payment. Please try again.');
     }
   };
+
+  if (!isAuthenticated) {
+    return <PasswordProtection onCorrectPassword={() => setIsAuthenticated(true)} />;
+  }
 
   if (loading) return <div className="container mx-auto p-4">Loading...</div>;
   if (error) return <div className="container mx-auto p-4 text-red-500">Error: {error}</div>;
