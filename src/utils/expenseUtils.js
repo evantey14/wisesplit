@@ -11,12 +11,12 @@ export function calculateBalances(expenses = [], payments = []) {
 
   // Process expenses
   expenses.forEach(expense => {
-    const { paidBy, amount, splitBetween } = expense;
-    if (!paidBy || !amount || !splitBetween || !Array.isArray(splitBetween)) return;
+    const { paidBy, amount, paidFor } = expense;
+    if (!paidBy || !amount || !paidFor || !Array.isArray(paidFor)) return;
     
-    const splitAmount = amount / splitBetween.length;
+    const splitAmount = amount / paidFor.length;
 
-    splitBetween.forEach(person => {
+    paidFor.forEach(person => {
       if (person !== paidBy) {
         balances[person] = balances[person] || {};
         balances[person][paidBy] = (balances[person][paidBy] || 0) + splitAmount;
@@ -26,33 +26,36 @@ export function calculateBalances(expenses = [], payments = []) {
     });
   });
 
+  console.log('Balances after processing expenses:', JSON.stringify(balances, null, 2));
+
   // Process payments
   payments.forEach(payment => {
     const { from, to, amount } = payment;
     if (!from || !to || !amount) return;
-    
+
     balances[from] = balances[from] || {};
     balances[from][to] = (balances[from][to] || 0) - amount;
     balances[to] = balances[to] || {};
     balances[to][from] = (balances[to][from] || 0) + amount;
   });
 
-  // Simplify balances
+  console.log('Balances after processing payments:', JSON.stringify(balances, null, 2));
+
+  // Calculate net balances
+  const netBalances = {};
   Object.keys(balances).forEach(person1 => {
     Object.keys(balances[person1]).forEach(person2 => {
-      if (balances[person2] && balances[person2][person1]) {
-        if (balances[person1][person2] > balances[person2][person1]) {
-          balances[person1][person2] -= balances[person2][person1];
-          delete balances[person2][person1];
-        } else {
-          balances[person2][person1] -= balances[person1][person2];
-          delete balances[person1][person2];
-        }
+      const amount = balances[person1][person2];
+      if (amount !== 0) {
+        netBalances[person1] = netBalances[person1] || {};
+        netBalances[person1][person2] = amount;
       }
     });
   });
 
-  return balances;
+  console.log('Net balances:', JSON.stringify(netBalances, null, 2));
+
+  return netBalances;
 }
 
 export function saveData(data) {
