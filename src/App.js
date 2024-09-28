@@ -79,16 +79,16 @@ function App() {
         </div>
       </div>
       <div className="mt-8">
+        <h2 className="text-2xl font-semibold mb-4">Balance Sheet</h2>
+        <BalanceSheet expenses={expenses} payments={payments} />
+      </div>
+      <div className="mt-8">
         <h2 className="text-2xl font-semibold mb-4">Expense History</h2>
         <ExpenseList expenses={expenses} />
       </div>
       <div className="mt-8">
         <h2 className="text-2xl font-semibold mb-4">Payment History</h2>
         <PaymentList payments={payments} />
-      </div>
-      <div className="mt-8">
-        <h2 className="text-2xl font-semibold mb-4">Balance Sheet</h2>
-        <BalanceSheet expenses={expenses} payments={payments} />
       </div>
     </div>
   );
