@@ -1,5 +1,5 @@
 import React from 'react';
-import { parseISO, isValid } from 'date-fns'; // Add this import
+import { isValid } from 'date-fns';
 
 function ExpenseList({ expenses }) {
   return (
