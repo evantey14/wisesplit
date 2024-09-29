@@ -1,8 +1,8 @@
 import React from 'react';
-import { calculateBalances } from '../utils/expenseUtils';
+import { calculateBalances, simplifyBalances } from '../utils/expenseUtils';
 
 function BalanceSheet({ expenses, payments }) {
-  const balances = calculateBalances(expenses, payments);
+  const balances = simplifyBalances(calculateBalances(expenses, payments));
 
   return (
     <div className="balance-sheet bg-white shadow-md rounded-lg p-6">
