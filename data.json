@@ -10,17 +10,6 @@
         "sab"
       ],
       "date": "2024-09-28T00:00:00.000Z"
-    },
-    {
-      "description": "console",
-      "amount": 75,
-      "paidBy": "neil",
-      "paidFor": [
-        "evan",
-        "neil",
-        "sab"
-      ],
-      "date": "2024-09-28"
     }
   ],
   "payments": [
